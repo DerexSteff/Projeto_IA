@@ -11,8 +11,8 @@ class WarehouseProblemGA(Problem):
         self.agent_search = agent_search
 
     def generate_individual(self) -> "WarehouseIndividual":
-        new_individual = WarehouseIndividual(self, len(self.agent_search.pairs))
-        #new_individual.initialize(self.prob1s)
+        new_individual = WarehouseIndividual(self, len(self.forklifts) - 1 + len(self.products))
+        new_individual.initialize()
         return new_individual
 
     def __str__(self):

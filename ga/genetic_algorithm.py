@@ -9,7 +9,6 @@ from ga.ga_event import GAEvent
 class GeneticAlgorithm:
 
     rand = None
-
     def __init__(self,
                  seed: int,
                  population_size: int,

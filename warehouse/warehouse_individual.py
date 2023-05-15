@@ -1,14 +1,21 @@
+from ga.genetic_algorithm import GeneticAlgorithm
 from ga.individual_int_vector import IntVectorIndividual
+from warehouse.warehouse_problemforGA import WarehouseProblemGA
+
 
 class WarehouseIndividual(IntVectorIndividual):
 
     def __init__(self, problem: "WarehouseProblemGA", num_genes: int):
         super().__init__(problem, num_genes)
-        # TODO
+        self.total_distance = None
+
 
     def compute_fitness(self) -> float:
-        # TODO
-        return 0
+        self.total_distance = 0
+        for i in range(len(self.genome)):
+            #TODO
+            pass
+        return self.total_distance
 
     def obtain_all_path(self):
         # TODO
@@ -30,3 +37,9 @@ class WarehouseIndividual(IntVectorIndividual):
         new_instance.fitness = self.fitness
         # TODO
         return new_instance
+
+    def initialize(self) -> None:
+        for i in range(self.genome):
+            rand = GeneticAlgorithm.rand.random() % len(self.genome)
+            if(rand not in self.genome):
+                self.genome[i] = rand
