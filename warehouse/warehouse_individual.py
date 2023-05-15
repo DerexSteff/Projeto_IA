@@ -39,7 +39,9 @@ class WarehouseIndividual(IntVectorIndividual):
         return new_instance
 
     def initialize(self) -> None:
-        for i in range(self.genome):
+        added = 0
+        while(added < len(self.genome)):
             rand = GeneticAlgorithm.rand.random() % len(self.genome)
             if(rand not in self.genome):
-                self.genome[i] = rand
+                self.genome[added] = rand
+                added += 1
