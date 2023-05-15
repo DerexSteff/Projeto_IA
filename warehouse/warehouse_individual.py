@@ -37,11 +37,3 @@ class WarehouseIndividual(IntVectorIndividual):
         new_instance.fitness = self.fitness
         # TODO
         return new_instance
-
-    def initialize(self) -> None:
-        added = 0
-        while(added < len(self.genome)):
-            rand = GeneticAlgorithm.rand.random() % len(self.genome)
-            if(rand not in self.genome):
-                self.genome[added] = rand
-                added += 1

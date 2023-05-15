@@ -1,6 +1,8 @@
 
 from abc import abstractmethod
 import numpy as np
+
+from ga.genetic_algorithm import GeneticAlgorithm
 from ga.problem import Problem
 from ga.individual import Individual
 
@@ -8,7 +10,14 @@ class IntVectorIndividual(Individual):
 
     def __init__(self, problem: Problem, num_genes: int):
         super().__init__(problem, num_genes)
-        self.genome = np.full(num_genes, 0, dtype=int)
+        self.genome = np.full(num_genes, dtype=int)
+        # preencher o genoma com valores aleatórios
+        added = 0
+        while added < len(self.genome):
+            rand = (GeneticAlgorithm.rand.random() % len(self.genome)) + 1
+            if rand not in self.genome:
+                self.genome[added] = rand
+                added += 1
 
     def swap_genes(self, other, index: int):
         aux = self.genome[index]
