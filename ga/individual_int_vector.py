@@ -10,7 +10,7 @@ class IntVectorIndividual(Individual):
 
     def __init__(self, problem: Problem, num_genes: int):
         super().__init__(problem, num_genes)
-        self.genome = np.array(num_genes, 0, dtype=int)
+        self.genome = np.full(num_genes, 0, dtype=int)
         # preencher o genoma com valores aleatórios
         added = 0
         while added < len(self.genome):

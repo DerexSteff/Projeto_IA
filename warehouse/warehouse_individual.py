@@ -8,10 +8,12 @@ class WarehouseIndividual(IntVectorIndividual):
     def __init__(self, problem: "WarehouseProblemGA", num_genes: int):
         super().__init__(problem, num_genes)
         self.total_distance = None
+        self.max_steps = None
 
 
     def compute_fitness(self) -> float:
         self.total_distance = 0
+        self.max_steps = 0
         for i in range(len(self.genome)):
             #TODO self.problem.agent_search
             pass
