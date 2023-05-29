@@ -10,14 +10,15 @@ class IntVectorIndividual(Individual):
 
     def __init__(self, problem: Problem, num_genes: int):
         super().__init__(problem, num_genes)
-        self.genome = np.full(num_genes, dtype=int)
+        self.genome = np.array(num_genes, 0, dtype=int)
         # preencher o genoma com valores aleatórios
         added = 0
         while added < len(self.genome):
-            rand = (GeneticAlgorithm.rand.random() % len(self.genome)) + 1
+            rand = GeneticAlgorithm.rand.randint(1, len(self.genome))
             if rand not in self.genome:
                 self.genome[added] = rand
                 added += 1
+        print(self.genome)
 
     def swap_genes(self, other, index: int):
         aux = self.genome[index]

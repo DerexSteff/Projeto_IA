@@ -670,6 +670,7 @@ class SearchSolver(threading.Thread):
             solution = self.agent.solve_problem(problem)
             # guardar o cost
             pair.value = solution.cost
+            #TODO pair.path = solution.path
 
         self.gui.text_problem.delete("1.0", "end")
         self.gui.text_problem.insert(tk.END, str(self.agent))

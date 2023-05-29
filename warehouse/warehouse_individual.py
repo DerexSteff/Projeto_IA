@@ -1,6 +1,6 @@
 from ga.genetic_algorithm import GeneticAlgorithm
 from ga.individual_int_vector import IntVectorIndividual
-from warehouse.warehouse_problemforGA import WarehouseProblemGA
+#from warehouse.warehouse_problemforGA import WarehouseProblemGA
 
 
 class WarehouseIndividual(IntVectorIndividual):
@@ -13,12 +13,14 @@ class WarehouseIndividual(IntVectorIndividual):
     def compute_fitness(self) -> float:
         self.total_distance = 0
         for i in range(len(self.genome)):
-            #TODO
+            #TODO self.problem.agent_search
             pass
         return self.total_distance
 
     def obtain_all_path(self):
         # TODO
+        #return forklifts_path, max_steps
+        # incluir posicao inicial forklift
         pass
 
     def __str__(self):
