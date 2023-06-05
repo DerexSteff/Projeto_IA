@@ -44,7 +44,7 @@ class WarehouseIndividual(IntVectorIndividual):
         # self.max_steps += pair.steps
         self.fitness = self.total_distance
         return self.max_steps"""
-
+        # .pptx crossover algorithms crossover operators for permutation ; slide 31
         genome_index = 0
         for forklift in self.problem.forklifts:
             if genome_index > len(self.genome) or self.genome[genome_index] > len(self.problem.products):
@@ -58,11 +58,10 @@ class WarehouseIndividual(IntVectorIndividual):
 
             # enquanto nao encontra outro forklift ou nao acabou genoma
             while genome_index < len(self.genome) and self.genome[genome_index] <= len(self.problem.products):
-                self.total_distance += self.get_pair_distance(self.problem.products[self.genome[genome_index-1] - 1],
-                                                              self.problem.products[self.genome[genome_index] - 1])
+                self.total_distance += self.get_pair_distance(self.problem.products[self.genome[genome_index-1] - 1], self.problem.products[self.genome[genome_index] - 1])
                 genome_index += 1
             # forklift -> exit
-            self.total_distance += self.get_pair_distance(forklift, self.problem.agent_search.exit)
+            self.total_distance += self.get_pair_distance(self.problem.products[self.genome[genome_index-1] - 1], self.problem.agent_search.exit)
 
         self.fitness = self.total_distance
         return self.max_steps
