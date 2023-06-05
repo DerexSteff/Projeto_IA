@@ -14,16 +14,36 @@ class WarehouseIndividual(IntVectorIndividual):
     def compute_fitness(self) -> float:
         self.total_distance = 0
         self.max_steps = 0
-        for i in range(len(self.genome)):
-            #TODO self.problem.agent_search
-            pass
-        return self.total_distance
+        forklift_index = 0
+        # 1º forklift -> 1º indice genoma
+        pair = self.find_pair(self.problem.forklifts[forklift_index], self.problem.products[self.genome[0] - 1])
+        self.total_distance += pair.value
+        # self.max_steps += pair.steps
+        i = 0
+        while i < (len(self.genome) - 1):
+            # genoma -> genoma, a comecar no primeiro indice
+            pair = self.find_pair(self.problem.products[self.genome[i] - 1], self.problem.products[self.genome[i+1] - 1])
+            self.total_distance += pair.value
+            #self.max_steps += pair.steps
+            i += 1
+        # ultimo genoma -> saida
+        pair = self.find_pair(self.problem.products[self.genome[i] - 1], self.problem.agent_search.exit)
+        self.total_distance += pair.value
+        # self.max_steps += pair.steps
+        self.fitness = self.total_distance
+        return self.max_steps
 
     def obtain_all_path(self):
         # TODO
         #return forklifts_path, max_steps
         # incluir posicao inicial forklift
         pass
+
+    def find_pair(self, cell1, cell2):
+        for p in self.problem.agent_search.pairs:
+            if (p.cell1 == cell1 and p.cell2 == cell2) or (p.cell1 == cell2 and p.cell2 == cell1):
+                return p
+        return None
 
     def __str__(self):
         string = 'Fitness: ' + f'{self.fitness}' + '\n'
