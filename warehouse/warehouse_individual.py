@@ -16,38 +16,12 @@ class WarehouseIndividual(IntVectorIndividual):
         self.total_distance = 0
         self.max_steps = 0
 
-        """
-        # 1º forklift -> 1º indice genoma
-        self.total_distance += self.get_pair_distance(self.problem.forklifts[forklift_index],
-                                                      self.problem.products[self.genome[0] - 1])
-        # self.max_steps += pair.steps
-
-        i = 0 # loop a percorrer o genoma
-        while i < (len(self.genome) - 1):
-            # mudar de forklift
-            if self.genome[i] > len(self.problem.products):
-                forklift_index += 1
-                self.total_distance += self.get_pair_distance(self.problem.forklifts[forklift_index],
-                                                              self.problem.products[self.genome[i+1] - 1])
-                # self.max_steps += pair.steps
-            if self.genome[i+1] > len(self.problem.products):
-                self.total_distance += self.get_pair_distance(self.problem.products[self.genome[i] - 1],
-                                                              self.problem.forklifts[forklift_index])
-            # genoma -> genoma, a comecar no primeiro indice
-            self.total_distance += self.get_pair_distance(self.problem.products[self.genome[i] - 1],
-                                                          self.problem.products[self.genome[i+1] - 1])
-            #self.max_steps += pair.steps
-            i += 1
-        # ultimo genoma -> saida
-        self.total_distance += self.get_pair_distance(self.problem.products[self.genome[i] - 1],
-                                                      self.problem.agent_search.exit)
-        # self.max_steps += pair.steps
-        self.fitness = self.total_distance
-        return self.max_steps"""
         # .pptx crossover algorithms crossover operators for permutation ; slide 31
+        #print("INDIVIDUAL**************************************")
+        #print("GENOME: ", self.genome)
         genome_index = 0
         for forklift in self.problem.forklifts:
-            if genome_index > len(self.genome) or self.genome[genome_index] > len(self.problem.products):
+            if genome_index >= len(self.genome) or self.genome[genome_index] > len(self.problem.products):
                 self.total_distance += self.get_pair_distance(forklift, self.problem.agent_search.exit)
                 genome_index += 1
                 continue
@@ -62,6 +36,8 @@ class WarehouseIndividual(IntVectorIndividual):
                 genome_index += 1
             # forklift -> exit
             self.total_distance += self.get_pair_distance(self.problem.products[self.genome[genome_index-1] - 1], self.problem.agent_search.exit)
+            genome_index += 1
+            #print("forklift: ", forklift, "total_distance: ", self.total_distance)
 
         self.fitness = self.total_distance
         return self.max_steps
