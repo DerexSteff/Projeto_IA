@@ -15,7 +15,7 @@ class Solution:
             self.actions.insert(0, node.state.action)
             self.path.insert(0, Cell(node.state.line_forklift, node.state.column_forklift))
             node = node.parent
-        self.path.insert(0, Cell(node.state.line_forklift, node.state.column_forklift)) # add the initial state
+        self.path.insert(0, Cell(node.state.line_forklift, node.state.column_forklift))
 
     @property
     def cost(self) -> int:

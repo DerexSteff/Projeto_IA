@@ -1,8 +1,10 @@
-import numpy as np
-
 from ga.genetic_algorithm import GeneticAlgorithm
 from ga.individual_int_vector import IntVectorIndividual
-#from warehouse.warehouse_problemforGA import WarehouseProblemGA
+import numpy as np
+from warehouse.cell import Cell
+
+
+# from warehouse.warehouse_problemforGA import WarehouseProblemGA
 
 
 class WarehouseIndividual(IntVectorIndividual):
@@ -14,7 +16,6 @@ class WarehouseIndividual(IntVectorIndividual):
         self.forklift_products = None
         self.forklift_distances = None
         # TODO self.forklifts_path = None
-
 
     def compute_fitness(self) -> float:
         self.total_distance = 0
@@ -37,13 +38,17 @@ class WarehouseIndividual(IntVectorIndividual):
         forklift = 0
         for products in self.forklift_products:
             if len(products) == 0:
-                self.total_distance += self.get_pair_distance(self.problem.forklifts[forklift], self.problem.agent_search.exit)
+                pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift], self.problem.agent_search.exit)
+                self.total_distance += pair_distance
                 forklift += 1
                 continue
-            self.total_distance += self.get_pair_distance(self.problem.forklifts[forklift], self.problem.products[products[0] - 1])
+            pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift], self.problem.products[products[0] - 1])
+            self.total_distance += pair_distance
             for i in range(1, len(products)):
-                self.total_distance += self.get_pair_distance(self.problem.products[products[i - 1] - 1], self.problem.products[products[i] - 1])
-            self.total_distance += self.get_pair_distance(self.problem.products[products[-1] - 1], self.problem.agent_search.exit)
+                pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[i - 1] - 1], self.problem.products[products[i] - 1])
+                self.total_distance += pair_distance
+            pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[-1] - 1], self.problem.agent_search.exit)
+            self.total_distance += pair_distance
             forklift += 1
 
         self.fitness = self.total_distance
@@ -51,14 +56,40 @@ class WarehouseIndividual(IntVectorIndividual):
 
     def obtain_all_path(self):
         # TODO
-        #return forklifts_path[][], max_steps
+        #return forklifts_path, max_steps
         # incluir posicao inicial forklift
-        pass
+        forklifts_path = [[None for _ in range(1)] for _ in range(len(self.problem.forklifts))]
+        genoma_index = 0
+        forklift_index = 0
+        max_steps = 0
+        for forklift in self.problem.forklifts:
+            forklifts_path[0][0] = Cell(forklift.line, forklift.column)
+            distance, pair_path = self.get_pair_distance(forklift, self.problem.products[self.genome[genoma_index] - 1])
+            forklifts_path[forklift_index].extend(pair_path)
+            if distance > max_steps:
+                max_steps = distance
+            genoma_index += 1
+            while genoma_index < len(self.genome) and self.genome[genoma_index] <= len(self.problem.products):
+                distance, pair_path = self.get_pair_distance(self.problem.products[self.genome[genoma_index-1] - 1], self.problem.products[self.genome[genoma_index] - 1])
+                forklifts_path[forklift_index].extend(pair_path)
+                if distance > max_steps:
+                    max_steps = distance
+                genoma_index += 1
+
+            distance, pair_path = self.get_pair_distance(self.problem.products[self.genome[genoma_index-1] - 1], self.problem.agent_search.exit)
+            forklifts_path[forklift_index].extend(pair_path)
+            if distance > max_steps:
+                max_steps = distance
+            genoma_index += 1
+            forklift_index += 1
+        return forklifts_path, max_steps
 
     def get_pair_distance(self, cell1, cell2):
         for p in self.problem.agent_search.pairs:
-            if (p.cell1 == cell1 and p.cell2 == cell2) or (p.cell1 == cell2 and p.cell2 == cell1):
-                return p.value
+            if p.cell1 == cell1 and p.cell2 == cell2:
+                return p.value, p.path
+            elif p.cell1 == cell2 and p.cell2 == cell1:
+                return p.value, reversed(p.path)
         return None
 
     def __str__(self):
