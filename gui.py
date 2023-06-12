@@ -644,7 +644,20 @@ class SearchSolver(threading.Thread):
         # guardar o cost
         pair.value = solution.cost"""
 
+        # calcular distancia entre todos os pares
+        self.calculate_pair_distances()
 
+        self.gui.text_problem.delete("1.0", "end")
+        self.gui.text_problem.insert(tk.END, str(self.agent))
+
+        self.agent.search_method.stopped=True
+        self.gui.problem_ga = WarehouseProblemGA(self.agent)
+        self.gui.manage_buttons(data_set=tk.NORMAL, runSearch=tk.DISABLED, runGA=tk.NORMAL, stop=tk.DISABLED,
+                                open_experiments=tk.NORMAL, run_experiments=tk.DISABLED, stop_experiments=tk.DISABLED,
+                                simulation=tk.DISABLED, stop_simulation=tk.DISABLED)
+        self.gui.frame.event_generate('<<AgentStopped>>', when='tail')
+
+    def calculate_pair_distances(self):
         # calcular distancia entre todos os pares
         for i in range(len(self.agent.pairs)):
             pair = self.agent.pairs[i]
@@ -670,17 +683,7 @@ class SearchSolver(threading.Thread):
             solution = self.agent.solve_problem(problem)
             # guardar o cost
             pair.value = solution.cost
-            #TODO pair.path = solution.path
-
-        self.gui.text_problem.delete("1.0", "end")
-        self.gui.text_problem.insert(tk.END, str(self.agent))
-
-        self.agent.search_method.stopped=True
-        self.gui.problem_ga = WarehouseProblemGA(self.agent)
-        self.gui.manage_buttons(data_set=tk.NORMAL, runSearch=tk.DISABLED, runGA=tk.NORMAL, stop=tk.DISABLED,
-                                open_experiments=tk.NORMAL, run_experiments=tk.DISABLED, stop_experiments=tk.DISABLED,
-                                simulation=tk.DISABLED, stop_simulation=tk.DISABLED)
-        self.gui.frame.event_generate('<<AgentStopped>>', when='tail')
+            pair.path = solution.path
 
 
 class SolutionRunner(threading.Thread):

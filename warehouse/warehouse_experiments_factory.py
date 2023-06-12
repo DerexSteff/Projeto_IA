@@ -14,6 +14,7 @@ from experiments_statistics.statistic_best_average import StatisticBestAverage
 from warehouse.warehouse_agent_search import read_state_from_txt_file, WarehouseAgentSearch
 from warehouse.warehouse_problemforGA import WarehouseProblemGA
 from warehouse.warehouse_state import WarehouseState
+#from gui import SearchSolver
 
 
 class WarehouseExperimentsFactory(ExperimentsFactory):
@@ -64,6 +65,7 @@ class WarehouseExperimentsFactory(ExperimentsFactory):
 
         agent_search = WarehouseAgentSearch(WarehouseState(matrix, num_rows, num_columns))
         # TODO calculate pair distances
+        #SearchSolver.calculate_pair_distances()
         self.problem = WarehouseProblemGA(agent_search)
 
         experiment_textual_representation = self.build_experiment_textual_representation()

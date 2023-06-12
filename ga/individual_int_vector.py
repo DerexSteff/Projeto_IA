@@ -18,7 +18,7 @@ class IntVectorIndividual(Individual):
             if rand not in self.genome:
                 self.genome[added] = rand
                 added += 1
-        print(self.genome)
+        #print(self.genome)
 
     def swap_genes(self, other, index: int):
         aux = self.genome[index]
