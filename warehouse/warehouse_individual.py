@@ -60,8 +60,34 @@ class WarehouseIndividual(IntVectorIndividual):
         # incluir posicao inicial forklift
         forklifts_path = [[None for _ in range(1)] for _ in range(len(self.problem.forklifts))]
         genoma_index = 0
-        forklift_index = 0
+        #forklift_index = 0
         max_steps = 0
+        forklift = 0
+        for products in self.forklift_products:
+            if len(products) == 0:
+                pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift], self.problem.agent_search.exit)
+                forklifts_path[forklift].extend(pair_path)
+                if pair_distance > max_steps:
+                    max_steps = pair_distance
+                forklift += 1
+                continue
+            pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift], self.problem.products[products[0] - 1])
+            forklifts_path[forklift].extend(pair_path)
+            if pair_distance > max_steps:
+                max_steps = pair_distance
+            for i in range(1, len(products)):
+                pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[i - 1] - 1], self.problem.products[products[i] - 1])
+                forklifts_path[forklift].extend(pair_path)
+                if pair_distance > max_steps:
+                    max_steps = pair_distance
+            pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[-1] - 1], self.problem.agent_search.exit)
+            forklifts_path[forklift].extend(pair_path)
+            if pair_distance > max_steps:
+                max_steps = pair_distance
+
+            forklift += 1
+
+        """
         for forklift in self.problem.forklifts:
             forklifts_path[0][0] = Cell(forklift.line, forklift.column)
             distance, pair_path = self.get_pair_distance(forklift, self.problem.products[self.genome[genoma_index] - 1])
@@ -81,7 +107,7 @@ class WarehouseIndividual(IntVectorIndividual):
             if distance > max_steps:
                 max_steps = distance
             genoma_index += 1
-            forklift_index += 1
+            forklift_index += 1"""
         return forklifts_path, max_steps
 
     def get_pair_distance(self, cell1, cell2):
