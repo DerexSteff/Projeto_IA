@@ -4,7 +4,7 @@ class Pair:
         self.cell2 = cell2
         self.value = 0
         self.path = None
-        # TODO?
+        self.path = None
 
     def hash(self):
         return str(self.cell1.line) + "_" + str(self.cell1.column) + "_" + str(
