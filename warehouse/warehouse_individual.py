@@ -56,7 +56,7 @@ class WarehouseIndividual(IntVectorIndividual):
 
     def obtain_all_path(self):
         # TODO
-        # return forklifts_path, max_steps
+        #return forklifts_path, max_steps
         # incluir posicao inicial forklift
         forklifts_path = [[None for _ in range(1)] for _ in range(len(self.problem.forklifts))]
         for f in range(len(self.problem.forklifts)):
