@@ -56,32 +56,63 @@ class WarehouseIndividual(IntVectorIndividual):
 
     def obtain_all_path(self):
         # TODO
-        #return forklifts_path, max_steps
+        # return forklifts_path, max_steps
         # incluir posicao inicial forklift
         forklifts_path = [[None for _ in range(1)] for _ in range(len(self.problem.forklifts))]
-        genoma_index = 0
-        forklift_index = 0
+        for f in range(len(self.problem.forklifts)):
+            forklifts_path[f][0] = self.problem.forklifts[f]
+        genome_index = 0
+        forklift_indexes = []
         max_steps = 0
-        for forklift in self.problem.forklifts:
-            forklifts_path[0][0] = Cell(forklift.line, forklift.column)
-            distance, pair_path = self.get_pair_distance(forklift, self.problem.products[self.genome[genoma_index] - 1])
-            forklifts_path[forklift_index].extend(pair_path)
-            if distance > max_steps:
-                max_steps = distance
-            genoma_index += 1
-            while genoma_index < len(self.genome) and self.genome[genoma_index] <= len(self.problem.products):
-                distance, pair_path = self.get_pair_distance(self.problem.products[self.genome[genoma_index-1] - 1], self.problem.products[self.genome[genoma_index] - 1])
-                forklifts_path[forklift_index].extend(pair_path)
-                if distance > max_steps:
-                    max_steps = distance
-                genoma_index += 1
+        steps = 0
+        while genome_index < len(self.genome):
+            if self.genome[genome_index] > len(self.problem.products):
+                forklift_indexes.append(genome_index)
+            genome_index += 1
+        self.forklift_products = np.split(self.genome, forklift_indexes)
+        # corrigir o array -> retirar o forklift do array
+        for i in range(1, len(self.problem.forklifts)):
+            self.forklift_products[i] = self.forklift_products[i][1:]
+        # print(forklift_products)
 
-            distance, pair_path = self.get_pair_distance(self.problem.products[self.genome[genoma_index-1] - 1], self.problem.agent_search.exit)
-            forklifts_path[forklift_index].extend(pair_path)
-            if distance > max_steps:
-                max_steps = distance
-            genoma_index += 1
-            forklift_index += 1
+        # guardar distancia total, path e max_steps
+        forklift = 0
+        for products in self.forklift_products:
+            if len(products) == 0:
+                pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift],
+                                                                  self.problem.agent_search.exit)
+                if pair_distance > max_steps:
+                    max_steps = pair_distance
+                    pair_path = list(pair_path)
+                for p in range(1, len(pair_path)):
+                    forklifts_path[forklift].append(pair_path[p])
+                forklift += 1
+                continue
+            pair_distance, pair_path = self.get_pair_distance(self.problem.forklifts[forklift],
+                                                              self.problem.products[products[0] - 1])
+            steps = pair_distance
+            pair_path = list(pair_path)
+            for p in range(1, len(pair_path)):
+                forklifts_path[forklift].append(pair_path[p])
+
+            for i in range(1, len(products)):
+                pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[i - 1] - 1],
+                                                                  self.problem.products[products[i] - 1])
+                steps += pair_distance
+                pair_path = list(pair_path)
+                for p in range(1, len(pair_path)):
+                    forklifts_path[forklift].append(pair_path[p])
+
+            pair_distance, pair_path = self.get_pair_distance(self.problem.products[products[-1] - 1],
+                                                              self.problem.agent_search.exit)
+            steps += pair_distance
+            pair_path = list(pair_path)
+            for p in range(1, len(pair_path)):
+                forklifts_path[forklift].append(pair_path[p])
+            if steps > max_steps:
+                max_steps = steps
+            forklift += 1
+
         return forklifts_path, max_steps
 
     def get_pair_distance(self, cell1, cell2):

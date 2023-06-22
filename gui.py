@@ -703,7 +703,8 @@ class SolutionRunner(threading.Thread):
         forklift_path, steps = self.best_in_run.obtain_all_path()
         old_cell = [None] * len(forklift_path)
         new_cells = []
-        for step in range(steps - 1):
+        for step in range(steps):
+            #print("Step: " + str(step))
             new_cells.clear()
             if not self.thread_running:
                 return
@@ -713,13 +714,16 @@ class SolutionRunner(threading.Thread):
                     old_cell[j] = firs_cell
                 if step < len(forklift_path[j]) - 1:
                     if old_cell[j] not in new_cells:
-                        self.state.matrix[old_cell[j].line][old_cell[j].column] = constants.EMPTY
+                        if self.state.matrix[old_cell[j].line][old_cell[j].column] != constants.EXIT:
+                            self.state.matrix[old_cell[j].line][old_cell[j].column] = constants.EMPTY
                     new_cell = forklift_path[j][step + 1]
                     new_cells.append(new_cell)
-                    self.state.matrix[new_cell.line][new_cell.column] = constants.FORKLIFT
+                    if self.state.matrix[new_cell.line][new_cell.column] != constants.EXIT:
+                        self.state.matrix[new_cell.line][new_cell.column] = constants.FORKLIFT
                     old_cell[j] = new_cell
                 else:
-                    self.state.matrix[old_cell[j].line][old_cell[j].column] = constants.FORKLIFT
+                    if self.state.matrix[old_cell[j].line][old_cell[j].column] != constants.EXIT:
+                        self.state.matrix[old_cell[j].line][old_cell[j].column] = constants.FORKLIFT
 
                 # TODO put the catched products in black
             self.gui.queue.put((copy.deepcopy(self.state), step, False))
