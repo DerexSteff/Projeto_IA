@@ -726,6 +726,14 @@ class SolutionRunner(threading.Thread):
                         self.state.matrix[old_cell[j].line][old_cell[j].column] = constants.FORKLIFT
 
                 # TODO put the catched products in black
+                for prod in self.best_in_run.forklift_products[j]:
+                    if old_cell[j].column != 0 and old_cell[j].line == self.gui.agent_search.products[prod - 1].line and\
+                            old_cell[j].column - 1 == self.gui.agent_search.products[prod - 1].column:
+                        self.state.matrix[old_cell[j].line][old_cell[j].column - 1] = constants.PRODUCT_CATCH
+                    elif old_cell[j].column != self.state.columns - 1 and old_cell[j].line == self.gui.agent_search.products[prod - 1].line and\
+                            old_cell[j].column + 1 == self.gui.agent_search.products[prod - 1].column:
+                        self.state.matrix[old_cell[j].line][old_cell[j].column + 1] = constants.PRODUCT_CATCH
+
             self.gui.queue.put((copy.deepcopy(self.state), step, False))
         self.gui.queue.put((None, steps, True))  # Done
 
