@@ -6,8 +6,9 @@ class Mutation2(Mutation):
         super().__init__(probability)
 
     def mutate(self, ind: IntVectorIndividual) -> None:
-        # TODO
-        pass
+        num_genes = len(ind.genome)
+        for i in range(num_genes):
+            ind.genome[i] = num_genes + 1 - ind.genome[i]
 
     def __str__(self):
         return "Mutation 2 (" + f'{self.probability}' + ")"
