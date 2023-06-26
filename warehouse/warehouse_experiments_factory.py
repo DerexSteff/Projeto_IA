@@ -1,3 +1,6 @@
+import copy
+
+import constants
 from experiments.experiments_factory import ExperimentsFactory
 from experiments.experiment import Experiment
 from experiments.experiment_listener import ExperimentListener
@@ -13,6 +16,7 @@ from experiments_statistics.statistic_best_in_run import StatisticBestInRun
 from experiments_statistics.statistic_best_average import StatisticBestAverage
 from warehouse.warehouse_agent_search import read_state_from_txt_file, WarehouseAgentSearch
 from warehouse.warehouse_problemforGA import WarehouseProblemGA
+from warehouse.warehouse_problemforSearch import WarehouseProblemSearch
 from warehouse.warehouse_state import WarehouseState
 #from gui import SearchSolver
 
@@ -65,7 +69,7 @@ class WarehouseExperimentsFactory(ExperimentsFactory):
 
         agent_search = WarehouseAgentSearch(WarehouseState(matrix, num_rows, num_columns))
         # TODO calculate pair distances
-        #SearchSolver.calculate_pair_distances()
+        self.calculate_pair_distances(agent_search)
         self.problem = WarehouseProblemGA(agent_search)
 
         experiment_textual_representation = self.build_experiment_textual_representation()
@@ -132,3 +136,33 @@ class WarehouseExperimentsFactory(ExperimentsFactory):
         string += str(self.recombination_method) + '\t'
         string += str(self.mutation_method) + '\t'
         return string
+
+
+
+    def calculate_pair_distances(self, agent: WarehouseAgentSearch):
+        # calcular distancia entre todos os pares
+        for i in range(len(agent.pairs)):
+            pair = agent.pairs[i]
+            cell1 = copy.copy(pair.cell1)
+            cell2 = copy.copy(pair.cell2)
+            # criar o estado para calcular
+            state = copy.deepcopy(agent.initial_environment)
+            # ajustar cell1 caso seja um produto
+            if cell1 not in agent.forklifts:
+                if cell1.column != 0 and state.matrix[cell1.line][cell1.column - 1] == constants.EMPTY:
+                    cell1.column -= 1
+                else:
+                    cell1.column += 1
+            state.set_forklift(cell1)
+            # ajustar cell2 caso seja um produto
+            if state.matrix[cell2.line][cell2.column] != constants.EXIT:
+                if cell2.column != 0 and state.matrix[cell2.line][cell2.column - 1] == constants.EMPTY:
+                    cell2.column -= 1
+                else:
+                    cell2.column += 1
+            # descobrir menor distancia
+            problem = WarehouseProblemSearch(state, cell2)
+            solution = agent.solve_problem(problem)
+            # guardar o cost
+            pair.value = solution.cost
+            pair.path = solution.path
